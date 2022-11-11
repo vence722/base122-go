@@ -1,5 +1,7 @@
 package base122
 
+import "unicode/utf8"
+
 type BasicDecoder struct {
 	data      []byte
 	curByte   byte
@@ -17,21 +19,24 @@ func NewBasicDecoderFromString(data string) *BasicDecoder {
 func (dec *BasicDecoder) Decode() ([]byte, error) {
 	var resultBuffer []byte
 	// loop the data as a UTF-8 string
+	if !utf8.Valid(dec.data) {
+		return nil, ErrInputInvalid
+	}
 	strData := bytesToString(dec.data)
 	for _, nextRune := range strData {
-		// UTF-8 codePoint should > 127
+		// UTF-8 codePoint
 		if nextRune > 127 {
 			// double bytes case
-			// 0b110xxx1y 0b10yyyyyy
-			// extract xxx from the first byte
-			illegalIndex := byte(nextRune>>10) & 0b00000111
+			// 0b110aaaxx 0b10yyyyyy --> 0baaaxxyyyyyy
+			// "aaa" is the encoding of the Illegal byte index
+			illegalIndex := byte(nextRune >> 8 & 7) // & 0b00000111
 			if illegalIndex != shortened {
 				dec.putNext7Bits(&resultBuffer, illegalBytes[illegalIndex])
 			}
-			dec.putNext7Bits(&resultBuffer, byte(nextRune)&127)
+			dec.putNext7Bits(&resultBuffer, byte(nextRune&127)) // & 0b01111111
 		} else {
 			// single byte case, put into the buffer directly
-			dec.putNext7Bits(&resultBuffer, byte(nextRune))
+			dec.putNext7Bits(&resultBuffer, byte(nextRune&255)) // & 0b11111111
 		}
 	}
 	return resultBuffer, nil
