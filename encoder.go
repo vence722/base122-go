@@ -1,25 +1,5 @@
 package base122
 
-import (
-	"errors"
-)
-
-const (
-	shortened = 0b00000111 // Used when the last two bytes are used to encode only less than 7 bits
-)
-
-var (
-	errEndOfBytes = errors.New("end of bytes")
-	illegalBytes  = map[byte]int{
-		0:  0, // null
-		10: 1, // newline
-		13: 2, // carriage return
-		34: 3, // double quote
-		38: 4, // ampersand
-		92: 5, // backslash
-	}
-)
-
 type BasicEncoder struct {
 	data    []byte
 	curByte int
@@ -38,7 +18,7 @@ func (enc *BasicEncoder) Encode() ([]byte, error) {
 		firstSevenBitsByte, err := enc.next7Bits()
 		if err != nil {
 			// end of the data, break the loop
-			if err == errEndOfBytes {
+			if err == ErrEndOfBytes {
 				break
 			}
 			// encouter other error, return the error
@@ -49,7 +29,7 @@ func (enc *BasicEncoder) Encode() ([]byte, error) {
 		// inside the illegal byte list
 		// e.g new line \r (10) --> 1
 		var illegalByteIndex int
-		if index, ok := illegalBytes[firstSevenBitsByte]; !ok {
+		if index, ok := illegalBytesMap[firstSevenBitsByte]; !ok {
 			// if no hit, just save the single 7-bits byte into the result
 			result = append(result, firstSevenBitsByte)
 			continue
@@ -65,7 +45,7 @@ func (enc *BasicEncoder) Encode() ([]byte, error) {
 		hasNextByte := true
 		secondSevenBitsByte, err := enc.next7Bits()
 		if err != nil {
-			if err == errEndOfBytes {
+			if err == ErrEndOfBytes {
 				hasNextByte = false
 			} else {
 				// encouter other error, return the error
@@ -93,7 +73,7 @@ func (enc *BasicEncoder) Encode() ([]byte, error) {
 
 func (enc *BasicEncoder) next7Bits() (byte, error) {
 	if enc.curByte >= len(enc.data) {
-		return 0, errEndOfBytes
+		return 0, ErrEndOfBytes
 	}
 	firstByte := enc.data[enc.curByte]
 	// extract the hightest (7 - enc.curBit) bits of the first byte, and shift 1 bit to the right

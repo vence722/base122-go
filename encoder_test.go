@@ -19,7 +19,7 @@ func TestEncoderNext7Bits(t *testing.T) {
 		t.Log("next 7 bits failed 3")
 		t.FailNow()
 	}
-	if _, err := encoder.next7Bits(); err != errEndOfBytes {
+	if _, err := encoder.next7Bits(); err != ErrEndOfBytes {
 		t.Log("next 7 bits failed 4")
 		t.FailNow()
 	}
