@@ -48,7 +48,7 @@ func (enc *BasicEncoder) Encode() ([]byte, error) {
 			if err == ErrEndOfBytes {
 				hasNextByte = false
 			} else {
-				// encouter other error, return the error
+				// encounter other error, return the error
 				return nil, err
 			}
 		}
