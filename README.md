@@ -1,9 +1,9 @@
 # base122-go
 Encoder and decoder implementation of [base122](https://blog.kevinalbs.com/base122) encoding scheme in Go programing language.
 
-Base122 is a space efficient binary-to-text encoding scheme, which encodes the binary into UTF-8 strings. It use less space to encode your binary data compared to base64 (12.5% higher efficiency according to the [wiki page](https://en.wikipedia.org/wiki/Binary-to-text_encoding)).
+Base122 is a space efficient binary-to-text encoding scheme, which encodes the binary into UTF-8 strings. It use less space to encode your binary data compared to base64 (12.5% higher efficiency according to this [wiki page](https://en.wikipedia.org/wiki/Binary-to-text_encoding)).
 
-This repo is inspired by [patrickfav/base122-java](https://github.com/patrickfav/base122-java) and [kevinAlbs/Base122](https://github.com/kevinAlbs/Base122), and aims to provide easy-to-use interface for Gophers to use base122 to encode your data efficiently.
+This repo is inspired by [patrickfav/base122-java](https://github.com/patrickfav/base122-java) and [kevinAlbs/Base122](https://github.com/kevinAlbs/Base122), and aims to provide easy-to-use interface for Gophers to use base122 to improve your encoding efficiency.
 
 ## Intro
 
